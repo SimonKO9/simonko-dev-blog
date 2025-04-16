@@ -62,4 +62,27 @@ hugo server --bind 0.0.0.0
 
 ## Part 3: Test publishing
 
-I've built my website running `hugo` command, then followed the [guide on Cloudflare](https://developers.cloudflare.com/pages/framework-guides/deploy-a-hugo-site/).
+I've built my website running `hugo` command, then followed the [guide on Cloudflare](https://developers.cloudflare.com/pages/framework-guides/deploy-a-hugo-site/). It worked seamlessly (at least for a start).
+
+I had to specify Hugo version by setting `HUGO_VERSION` environment variable, but that is also covered in Cloudflare's guide.
+
+After creating my Cloudflare Page, I navigated to `Custom domains` tab and set up my custom domain simonko.dev. Since my domain registrar is cloudflare, they updated the DNS records for me. If your domain is hosted somewhere else, you'll have several options. Refer to [the official documentation](https://developers.cloudflare.com/pages/configuration/custom-domains/) for details.
+
+## Summarize
+
+At this point, I am set for focusing on content. The only cost, unavoidable since I wanted to use my own domain, is the domain.
+
+Cost breakdown
+
+| item                   | cost       |
+|------------------------|------------|
+| Hosting code on GitHub | free       |
+| CloudFlare Pages       | free       |
+| Deployment             | free       |
+| Domain                 | ~ $12/year |
+
+It took me very little time to set this up and I don't really foresee any maintenance. Security-wise it's perfect, because there's no server, backend, API or database I need to care about. As long as noone breaks into my account on GitHub or CloudFlare, I should be fine.
+
+## What's next?
+
+I am not a fan of ClickOps. To get where I am it made sense to do it all manually - to get a better understanding of what's required. As a next step, I'll try setting up my CloudFlare Page with Terraform. But that's a topic for another blog post.
