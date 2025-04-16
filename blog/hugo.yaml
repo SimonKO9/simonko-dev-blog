@@ -52,7 +52,6 @@ params:
     safari_pinned_tab: "<link / abs url>"
 
   label:
-    text: "Home"
     icon: /apple-touch-icon.png
     iconHeight: 35
 
@@ -73,14 +72,14 @@ params:
 
   # home-info mode
   homeInfoParams:
-    Title: "Hi there \U0001F44B"
-    Content: Welcome to my blog
+    Title: "Hi there, I'm Szymon."
+    Content: I consider myself an engineer who loves to learn and decided to give back and share my knowledge with the world. My interests revolve around cloud, containers and Kubernetes, but go well beyond that. I am deeply interested in cost and operational efficiency which I hope to show you in my posts. ;)
 
   socialIcons:
-    - name: stackoverflow
-      url: "https://stackoverflow.com"
     - name: github
-      url: "https://github.com/"
+      url: "https://github.com/SimonKO9"
+    - name: linkedin
+      url: "https://www.linkedin.com/in/szymonkownacki/"
 
   # analytics:
   #   google:
