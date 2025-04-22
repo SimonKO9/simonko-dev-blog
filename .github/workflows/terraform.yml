@@ -28,6 +28,7 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init -input=false -no-color
+        working-directory: ./infra
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -37,10 +38,12 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+        working-directory: ./infra
 
       - name: Terraform Plan
         id: plan
         run: terraform plan -input=false -no-color -out=tfplan
+        working-directory: ./infra
 
       # - name: Terraform Apply
         # id: apply
