@@ -50,5 +50,6 @@ jobs:
       - name: Terraform Apply
         id: apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: ./infra
         run: terraform apply -input=false -auto-approve -no-color tfplan
 
