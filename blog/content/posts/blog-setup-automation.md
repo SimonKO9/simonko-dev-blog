@@ -1,6 +1,6 @@
 ---
 title: "Blog Setup Automation"
-date: 2025-04-12
+date: 2025-04-29
 draft: false
 ShowToc: true
 tags: ["blog", "hugo", "automation", "cloudflare"]
