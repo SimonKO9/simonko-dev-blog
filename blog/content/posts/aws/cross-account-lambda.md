@@ -1,20 +1,23 @@
 ---
-title: "Using images stored in ECR for AWS Lambda"
-date: 2025-05-09
+title: "AWS Lambda & ECR: A Permissions Guide for Same-Account, Cross-Account and AWS Organizations Setups"
+date: 2025-05-10
 draft: false
 ShowToc: true
 tags: ["aws", "lambda", "ecr"]
 ---
 
-## Introduction 
+## Introduction
 
-Since its introduction, AWS Lambda's supported runtimes have continually expanded. Around 2020, support for containerized Lambdas was added. In this post, I'll walk you through the requirements for running Lambdas using images stored in ECR. I will cover scenarios where the ECR repository is in the same account, a more complex scenario with the repository in a different account, and a setup for larger organizations using AWS Organizations with multiple accounts organized into a hierarchy.
+Since its introduction, AWS Lambda's supported runtimes have continually expanded. Around 2020, support for containerized Lambdas was added. In this post, I'll walk you through the permissions needed for running Lambdas with images stored in ECR. We'll look at these scenarios:
+- Lambda and ECR repository in the same account
+- Lambda and ECR in different accounts
+- Multi-account setup with AWS Organizations
 
-I will be strictly focusing on the permissions aspect. In my opinion, the official [AWS Documentation](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html) is approachable and detailed enough with respect to the process of building container images for Lambdas, but it is somewhat scarce on the necessary permissions. Regardless of my opinion, [here's a link](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#gettingstarted-images-permissions) to the official documentation on the permissions aspect.
+I'll be strictly focusing on the permissions. In my opinion, the official [AWS Documentation](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html) covers the process of building container images for Lambdas really well, but it is somewhat scarce on the necessary permissions. Regardless, [here's a link](https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#gettingstarted-images-permissions) to the official documentation on the permissions aspect.
 
 ## Prerequisites
 
-For the purposes of this blog post, I created two AWS Accounts. I am using AWS Organizations because it simplifies creating and cleaning up additional accounts. I also wanted to cover a multi-account setup with AWS Organizations, and we'll get to that in a later section of this post.
+For this blog post, I created two AWS accounts. I am using AWS Organizations because it simplifies creating and cleaning up additional accounts. I also wanted to cover a multi-account setup with AWS Organizations, which we'll get to in a later section.
 
 In one of the accounts, I created three ECR repositories:
 - 813835382529.dkr.ecr.eu-central-1.amazonaws.com/lambda-same-account
@@ -38,7 +41,7 @@ architecture-beta
 
 Repository policies will be assigned to the ECR repositories according to the presented scenario.
 
-I'm building and pushing the same container image to all these repositories. I chose Python and here's the sources if you wanted to reproduce my examples:
+I'm building and pushing the same container image to all these repositories. I chose Python, but the permissions concepts apply to any runtime. Here are the sources for reference:
 
 ```python
 # lambda_function.py
@@ -91,7 +94,7 @@ $ curl "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
 "Hello from AWS Lambda using Python3.12.9 (main, Apr  9 2025, 10:25:36) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]!"
 ```
 
-LGTM. :)
+LGTM - and works as expected. :)
 
 In addition to the image, we'll also need an IAM Role for our Lambda. Here's how we can do that:
 ```shell
@@ -123,6 +126,8 @@ $ aws iam create-role --role-name LambdaRoleWithoutPermissions --assume-role-pol
 The Lambda role creation step must be repeated in the other account in multi-account scenarios.
 
 ## Lambda and ECR repository in the same account
+
+
 
 ```mermaid
 architecture-beta
@@ -508,6 +513,12 @@ Another way to structure the policy is by using `aws:PrincipalOrgPaths` and `aws
 ## Summary
 
 We covered the configuration of ECR Repository permissions required for AWS Lambda across different scenarios, depending on the needs or complexity of the organization. Features AWS is offering for our disposal lets us write concise policies, even for complex organizational setups.
+
+Key takeaways:
+- Watch out for AWS modifying your ECR repository permissions on Lambda creation.
+- For cross-account, the policy must cover both the Lambda service and the target account.
+- AWS Organizations conditions can help you write your policies in a scalable manner.
+
 
 ## References
 
