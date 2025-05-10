@@ -19,6 +19,7 @@ resource "cloudflare_pages_project" "blog" {
     production {
       environment_variables = {
         HUGO_VERSION = "0.145.0"
+        CF_PAGES_URL = "https://${var.domain_name}"
       }
     }
   }
