@@ -4,7 +4,7 @@ resource "cloudflare_pages_project" "blog" {
   production_branch = "main"
 
   build_config {
-    build_command   = "hugo -b $CF_PAGES_URL"
+    build_command   = "if [ \"$CF_PAGES_BRANCH\" = \"main\" ]; then hugo; else hugo -b $CF_PAGES_URL; fi"
     root_dir        = "blog"
     destination_dir = "public"
     build_caching   = true
@@ -19,7 +19,6 @@ resource "cloudflare_pages_project" "blog" {
     production {
       environment_variables = {
         HUGO_VERSION = "0.145.0"
-        CF_PAGES_URL = "https://${var.domain_name}"
       }
     }
   }

@@ -97,7 +97,7 @@ resource "cloudflare_pages_project" "blog" {
   production_branch = "main"
 
   build_config {
-    build_command   = "hugo -b $CF_PAGES_URL"
+    build_command   = "if [ \"$CF_PAGES_BRANCH\" = \"main\" ]; then hugo; else hugo -b $CF_PAGES_URL; fi"
     root_dir        = "blog"
     destination_dir = "public"
     build_caching   = true
