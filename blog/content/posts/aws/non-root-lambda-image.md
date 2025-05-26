@@ -1,6 +1,6 @@
 ---
 title: "How to Run AWS Lambda Container Images as a Non-Root User and Satisfy Security Scanners"
-date: 2025-05-25
+date: 2025-05-26
 draft: false
 ShowToc: true
 tags: ["aws", "lambda", "security", "containers"]
