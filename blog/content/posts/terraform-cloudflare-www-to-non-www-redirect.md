@@ -42,6 +42,15 @@ resource "cloudflare_page_rule" "www_to_non_www_redirect" {
 }
 ```
 
+Please note that this operation requires `Zone - Page Rules - Edit` permissions granted for your token, otherwise you may get an error like the one I got:
+```
+Error: failed to create page rule: Unauthorized to access requested resource (9109)
+
+  with cloudflare_page_rule.www_to_non_www_redirect,
+  on pagerules.tf line 1, in resource "cloudflare_page_rule" "www_to_non_www_redirect":
+   1: resource "cloudflare_page_rule" "www_to_non_www_redirect" {
+```
+
 ...and that's really all there's to it. 
 
 I'm keeping this post short.
