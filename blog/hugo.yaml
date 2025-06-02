@@ -1,5 +1,5 @@
 baseURL: "https://simonko.dev/"
-title: simonko.dev
+title: simonko.dev - a blog about cloud, kubernetes, containers and more
 pagitnation: 
   pagerSize: 5
 theme: PaperMod
@@ -16,7 +16,7 @@ minify:
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: simonko.dev
-  description: "A blog about cloud, containers and more"
+  description: "Dive into cloud, Kubernetes, and containers with me. I share practical insights, tips, and personal experiences with a focus on cost-efficient and/or operationally sound tech solutions."
   keywords: [Blog, Szymon, Kownacki, Kubernetes, Cloud, Containers, AWS, EKS]
   mainSections: ["posts"]
   author: Simon
