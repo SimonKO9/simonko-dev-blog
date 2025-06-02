@@ -55,6 +55,32 @@ Error: failed to create page rule: Unauthorized to access requested resource (91
 
 I'm keeping this post short.
 
+## Validation
+
+Once configured, I ran a few checks to confirm the rule is working as expected:
+
+```sh
+# Test redirect at root
+$ curl --head https://www.simonko.dev 
+HTTP/2 301 
+date: Mon, 02 Jun 2025 19:36:40 GMT
+location: https://simonko.dev/
+# ...
+
+# Test redirect for a specific page
+$ curl --head -s https://www.simonko.dev/posts/blog-setup-automation/
+HTTP/2 301 
+date: Mon, 02 Jun 2025 19:38:34 GMT
+location: https://simonko.dev/posts/blog-setup-automation/
+# ...
+
+# Test no redirect if non-www domain is used
+$ curl --head -s https://simonko.dev/posts/blog-setup-automation/    
+HTTP/2 200 
+date: Mon, 02 Jun 2025 19:39:32 GMT
+content-type: text/html; charset=utf-8
+```
+
 ## Additional comment
 
 Some SEO-checkers classified this problem as "Duplicate content", where they could access my posts using either www or non-www domain. Others called this "canonicalization issues". The explanation provided by these tools is that some search engines may be "unsure" about which is the correct one to index. I am not sure if this was a problem in practice, as the links on my blog always pointed to a non-www version, regardless of the URL used to access the page. Yet, I decided to fix it to get a higher score, he-he - and to make sure it doesn't become a problem in future. ;)
