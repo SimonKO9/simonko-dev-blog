@@ -50,14 +50,17 @@ There's generally two types of tools that can help solve this problem:
 - Tools dedicated to solving a specific problem, capable of managing a specific type of resource,
 - Tools capable of managing cloud resources.
 
+Tables below list the tools I identified for more detailed research. I am including AWS Load Balancer Controller and CSI Drivers for completeness, as I mentioned them before, but these will not be discussed in detail.
+
 ### Dedicated 
 
-| Tool / Project               | What it Manages                 | Notes                                                    |
-|------------------------------|---------------------------------|----------------------------------------------------------|
-| **Karpenter**                | Nodes                           | Probably the most powerful cluster autoscaler            |
-| **Cluster Autoscaler (CAS)** | Node autoscaling                | Uses EC2 ASGs, limited flexibility, uses EKS Node Groups |
-| **EBS CSI Driver**           | EBS volume dynamic provisioning | Can automatically provision EBS volumes                  |
-| **EFS CSI Driver**           | EFS volume dynamic provisioning | Can automatically provision EFS volumes                  |
+| Tool / Project                   | What it Manages                 | Notes                                                                 |
+|----------------------------------|---------------------------------|-----------------------------------------------------------------------|
+| **Karpenter**                    | Nodes                           | Probably the most powerful cluster autoscaler                         |
+| **Cluster Autoscaler (CAS)**     | Node autoscaling                | Uses EC2 ASGs, limited flexibility, uses EKS Node Groups              |
+| **AWS Load Balancer Controller** | Load Balancers                  | Can automatically provision ALB/NLB for Services of type LoadBalancer |
+| **EBS CSI Driver**               | EBS volume dynamic provisioning | Can automatically provision EBS volumes                               |
+| **EFS CSI Driver**               | EFS volume dynamic provisioning | Can automatically provision EFS volumes                               |
 
 ### General Kubernetes-Native Infrastructure Controllers
 
@@ -122,15 +125,15 @@ You need something talking to the AWS API to configure the associations. In the 
 
 I couldn't find anything specific enabling Kubernetes-native solution.
 
-Browsing the Internet, I stumbled upon [this open GitHub ticket (Create Pod Identity Associations based on annotations on ServiceAccounts #2291)](https://github.com/aws/containers-roadmap/issues/2291) and started reading through comments. [joshuabaird suggested a solution](https://github.com/aws/containers-roadmap/issues/2291#issuecomment-1955255563) that would meet my expectations. [And so did danielloader](https://github.com/aws/containers-roadmap/issues/2291#issuecomment-2104771614). They mentioned two tools that I've been watching for a while now - [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/) and [Crossplane](https://www.crossplane.io).
+Browsing the Internet, I stumbled upon [this open GitHub ticket (Create Pod Identity Associations based on annotations on ServiceAccounts #2291)](https://github.com/aws/containers-roadmap/issues/2291) and started skimming through comments. [joshuabaird suggested a solution](https://github.com/aws/containers-roadmap/issues/2291#issuecomment-1955255563) that would meet my expectations. [And so did danielloader](https://github.com/aws/containers-roadmap/issues/2291#issuecomment-2104771614). They mentioned two tools that I've been watching for a while now - [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/) and [Crossplane](https://www.crossplane.io).
 
 > There's a GKE-specific offering managed by Google - [Config Connector](https://cloud.google.com/config-connector/docs/overview) and [Azure Service Operator](https://github.com/Azure/azure-service-operator) for AKS.
 
 ### EKS Cluster
 
-Now we get to the interesting part - managing EKS cluster with Kubernetes. But what does it mean? Managing EKS resource means you have full control over cluster's VPC, network or access configuration, as well as performing Kubernetes upgrades (upgrading control plane version). But there's more - it also means you can **create, update and delete** clusters by interacting with Kubernetes API.
+Now we get to the interesting part - managing EKS cluster with Kubernetes. We have to ask ourselves - what does it actually mean? Managing EKS resource in AWS means you have full control over cluster's VPC, network or access configuration, as well as performing Kubernetes upgrades (upgrading control plane version). But there's more - it also means you can **create, update and delete** clusters by interacting with Kubernetes API.
 
-There's two models you can operate in - self-managed clusters (where a certain controller responsible for this feature manages the cluster it's running in) or a hub-and-spoke model, where a management cluster controls everything around. You can also have a hybrid, where the management cluster controls itself, as well as all the clusters around it. If you want to read more about it, [there's a blog post from AWS](https://aws.amazon.com/blogs/containers/part-1-build-multi-cluster-gitops-using-amazon-eks-flux-cd-and-crossplane/) describing an architecture with Crossplane and Flux. It's from 2023, but the rules haven't changed.
+There's two models you can operate in - self-managed clusters (where a certain controller responsible for this feature manages the cluster it's running in) or a hub-and-spoke model, where a management (central) cluster controls everything around and provisions and manage additional clusters. You can also have a hybrid, where the management cluster controls itself, as well as all the clusters around it. If you want to read more about it, [there's a blog post from AWS](https://aws.amazon.com/blogs/containers/part-1-build-multi-cluster-gitops-using-amazon-eks-flux-cd-and-crossplane/) describing an architecture with Crossplane and Flux. It's from 2023, but the rules haven't changed.
 
 #### Findings
 
