@@ -1,9 +1,9 @@
 ---
-title: "You don't need Terraform for your EKS anymore"
-date: 2025-06-08
+title: "Do you still need Terraform for EKS management?"
+date: 2025-07-08
 draft: false
 ShowToc: true
-tags: ["eks", "kubernetes", "security", "managed kubernetes", "aks", "gke"]
+tags: ["eks", "kubernetes", "security", "managed kubernetes", "aks", "gke", "terraform", "crossplane"]
 ---
 
 ## Introduction and motivation
@@ -27,13 +27,22 @@ I think there's a lot of elegance in configuring the cluster, cloud infrastructu
 
 > I've mentioned Terraform because it's the most popular tool in the market. You can replace it with Pulumi, CloudFormation, or CDK here. It doesn't really matter, because the model is not much different.
 
+A setup with Terraform only may look like this:
+![Terraform only](/diagrams/eks-all-terraform.png)
+
+or like this, if ArgoCD is adopted for application deployments:
+![Terraform and ArgoCD](/diagrams/eks-terraform-argo.png)
+
+The architecture that I'd like to achieve would look more or less like this:
+![Full GitOps](/diagrams/eks-all-argocd.png)
+
 ## Research
 
 Before I could start my research, I had to first narrow it down to specific resources that are the building blocks of an EKS cluster, or are required by those building blocks. To make this research feasible, I am limiting it to resources that are truly specific to a Kubernetes cluster and excluding those that can be treated as "provided" or the "foundation" of an AWS account (e.g., VPC, subnets, general networking).
 
 Resources that I am interested in managing in a K8s-native way are:
 - EKS clusters,
-- EKS cluster addons,
+- EKS cluster add-ons,
 - Nodes / Managed Node Groups,
 - IRSA / Pod Identities.
 
@@ -79,9 +88,15 @@ See [https://karpenter.sh/docs/concepts/nodepools/](https://karpenter.sh/docs/co
 
 One  way to think about applications running in a Kubernetes cluster is to separate them into two groups: system components and regular apps. System components extend or enhance the platform itself, while regular apps are the workloads that benefit from those enhancements.
 
-EKS makes it easy to manage many of these system components as "add-ons." These are AWS-supported integrations that can be installed and updated directly through the EKS API or console. Examples include the VPC CNI, CoreDNS, kube-proxy or storage drivers. For a full list of available EKS add-ons, check out the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/workloads-add-ons-available-eks.html).
+EKS makes it easy to manage many of these system components as `cluster add-ons`. These are AWS-supported integrations that can be installed and updated directly through the EKS API or console. Examples include the VPC CNI, CoreDNS, kube-proxy or storage drivers. For a full list of available EKS add-ons, check out the [official documentation](https://docs.aws.amazon.com/eks/latest/userguide/workloads-add-ons-available-eks.html).
 
-The downside of using AWS Add-ons is that these are managed outside of the cluster.
+While cluster add-ons simplify managing certain components, their state lives outside of the cluster. The goal we're pursuing here is bringing the management of these inside the cluster.
+
+I've identified three tools capable of expressing EKS Add-Ons as Kubernetes objects - ACK, Crossplane or Cluster API (CAPI). ACK and Crossplane, being more general-purpose tools, can handle other aspects of cluster management - continue reading.
+
+Another compelling alternative is self-managing these apps, as they are released as Helm charts accompanied by container images that can be managed by Argo. Addons may depend on cloud resources (e.g. IAM Roles), so these would need to be created first.
+
+AWS provides detailed instructions on self-managing [VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/vpc-add-on-self-managed-update.html), [Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/lbc-helm.html), [CoreDNS](https://docs.aws.amazon.com/eks/latest/userguide/coredns-add-on-self-managed-update.html) or [kube-proxy](https://docs.aws.amazon.com/eks/latest/userguide/kube-proxy-add-on-self-managed-update.html).
 
 ### IRSA / Pod Identities
 
@@ -95,7 +110,7 @@ EKS administrators have two ways for configuring the mapping between AWS IAM and
 
 Pod Identities is the "new way" (introduced in 2023) of achieving the same, just differently. A trust policy is still required, but it's more generic and is not cluttering the role with cluster-specific configuration. The actual binding between IAM and Kubernetes Service Accounts is configured by creating a Pod Identity Association.
 
-There's another component required to make it work - Pod Identity Agent - that you have to install (either as a chart, or as an addon). Pod Identity Agent comes preconfigured when using EKS Auto Mode.
+There's another component required to make it work - Pod Identity Agent - that you have to install (either as a chart, or as an add-on). Pod Identity Agent comes preconfigured when using EKS Auto Mode.
 
 #### The problem
 
