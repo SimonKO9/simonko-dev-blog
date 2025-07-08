@@ -11,8 +11,7 @@ from diagrams.k8s.compute import Pod
 from diagrams.onprem.gitops import ArgoCD
 
 graph_attr = {
-    "pad": "0.0",
-    "margin": "0.0"
+    "pad": "0",
 }
 
 # Diagram 1: Everything managed by Terraform (including app deployments)
