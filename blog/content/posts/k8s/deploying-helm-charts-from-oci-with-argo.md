@@ -23,7 +23,7 @@ Please ensure the following prerequisites are met:
 
 1. A running Kubernetes cluster.
 2. `kubectl` installed and configured to communicate with your cluster.
-3. ArgoCD deployed.
+3. ArgoCD deployed (I am using v3.0.11).
 4. A Git repository available for ArgoCD to reference.
 
 This post is accompanied by a [GitHub repository](https://github.com/SimonKO9/blog-demos-k8s/tree/argo-helm/001-argo-helm) containing all examples  for Helm chart deployment. The README also includes instructions for setting up ArgoCD locally.
@@ -92,6 +92,11 @@ stringData:
   enableOCI: "true"
   username: AWS
   password: <placeholder-for-aws-ecr-token>
+```
+
+I am using AWS ECR and a temporary token can be generated using the following command:
+```sh
+aws ecr get-login-password --region <region>
 ```
 
 > **Note:** ECR tokens are only valid for 12 hours. You need a way to refresh these, or ArgoCD will fail to download charts when the token expires. I recommend using ExternalSecrets, which supports credential refresh at intervals. See [this GitHub comment](https://github.com/argoproj/argo-cd/issues/20810#issuecomment-2518745195) for inspiration.
