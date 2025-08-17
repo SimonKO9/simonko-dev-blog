@@ -1,10 +1,10 @@
 ---
-title: "How to deploy Helm charts stored in private ECR with Argo CD?"
-date: 2025-07-21
+title: "Deploying Helm Charts from ECR with ArgoCD: Automating ECR Credential Rotation with ESO"
+date: 2025-08-17
 draft: false
 ShowToc: true
 tags: ["gitops", "kubernetes", "argocd", "helm", "ecr"]
-description: "A practical guide to deploying Helm charts from a private ECR repository with ArgoCD with help of External Secrets."
+description: "A practical guide to deploying Helm charts from a private ECR repository with ArgoCD, using External Secrets Operator to automate ECR credential rotation."
 ---
 
 ## Introduction
